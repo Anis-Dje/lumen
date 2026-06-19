@@ -6,6 +6,7 @@ import { useAuthStore } from '@/stores/authStore';
 import { useCartStore } from '@/stores/cartStore';
 import { useCatalogStore } from '@/stores/catalogStore';
 import { startOAuth } from '@/lib/oauth';
+import { Avatar } from '@/components/ui/Avatar';
 
 const GoogleGlyph = () => (
   <svg className="h-4 w-4" viewBox="0 0 24 24" aria-hidden="true">
@@ -160,9 +161,9 @@ export function Navbar() {
                   <>
                     <button
                       onClick={() => setUserDropdown((p) => !p)}
-                      className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-medium text-text-secondary hover:text-text-primary hover:bg-white/5 transition-colors"
+                      className="flex items-center gap-1.5 px-2 py-1.5 rounded-xl text-sm font-medium text-text-secondary hover:text-text-primary hover:bg-white/5 transition-colors"
                     >
-                      <User className="w-4 h-4" />
+                      <Avatar name={user.name} src={user.avatar_url} size={26} />
                       <span className="max-w-[100px] truncate">{user.name}</span>
                       <ChevronDown
                         className={clsx('w-3.5 h-3.5 transition-transform', userDropdown && 'rotate-180')}
@@ -170,7 +171,14 @@ export function Navbar() {
                     </button>
 
                     {userDropdown && (
-                      <div className="absolute right-0 mt-2 w-48 bg-bg-elevated border border-border-subtle rounded-xl shadow-xl shadow-black/20 overflow-hidden py-1 animate-[fade-in_0.15s_ease-out]">
+                      <div className="absolute right-0 mt-2 w-56 bg-bg-elevated border border-border-subtle rounded-xl shadow-xl shadow-black/20 overflow-hidden py-1 animate-[fade-in_0.15s_ease-out]">
+                        <div className="flex items-center gap-3 px-4 py-3 border-b border-border-subtle">
+                          <Avatar name={user.name} src={user.avatar_url} size={36} />
+                          <div className="min-w-0">
+                            <p className="truncate text-sm font-semibold text-text-primary">{user.name}</p>
+                            <p className="truncate text-xs text-text-secondary">{user.email}</p>
+                          </div>
+                        </div>
                         <Link
                           to="/orders"
                           onClick={() => setUserDropdown(false)}
@@ -280,9 +288,13 @@ export function Navbar() {
             <div className="p-4 border-t border-border-subtle sm:hidden">
               {user ? (
                 <div className="space-y-1">
-                  <p className="px-2 py-1 text-xs font-semibold text-text-secondary/60">
-                    {user.name}
-                  </p>
+                  <div className="flex items-center gap-2 px-2 py-2">
+                    <Avatar name={user.name} src={user.avatar_url} size={32} />
+                    <div className="min-w-0">
+                      <p className="truncate text-sm font-semibold text-text-primary">{user.name}</p>
+                      <p className="truncate text-xs text-text-secondary">{user.email}</p>
+                    </div>
+                  </div>
                   <Link
                     to="/orders"
                     onClick={() => setMobileOpen(false)}
