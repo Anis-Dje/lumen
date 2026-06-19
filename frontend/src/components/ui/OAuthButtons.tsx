@@ -1,20 +1,8 @@
+import { startOAuth } from '../../lib/oauth';
+
 /**
- * "Continue with…" social sign-in buttons.
- *
- * OAuth requires a full-page redirect to the backend (not an XHR call), so we
- * navigate the browser to `${API}/auth/{provider}/redirect`. The backend then
- * bounces to the provider and, after consent, redirects back to
- * `${FRONTEND_URL}/auth/callback?token=…`.
- *
- * API base resolves to VITE_API_URL when set (separate-origin deploys),
- * otherwise the dev-proxied relative `/api`.
+ * "Continue with…" social sign-in buttons (Google / GitHub).
  */
-const API_BASE = (import.meta.env.VITE_API_URL as string | undefined) ?? '/api';
-
-function startOAuth(provider: 'google' | 'github') {
-  window.location.href = `${API_BASE}/auth/${provider}/redirect`;
-}
-
 const GoogleIcon = () => (
   <svg className="h-4 w-4" viewBox="0 0 24 24" aria-hidden="true">
     <path fill="#FFC107" d="M43.6 20.5h-1.9V20H24v8h11.3c-1.6 4.7-6.1 8-11.3 8a12 12 0 1 1 0-24c3 0 5.8 1.1 7.9 3l5.7-5.7A20 20 0 1 0 24 44c11 0 20-8 20-20 0-1.3-.1-2.3-.4-3.5z" />

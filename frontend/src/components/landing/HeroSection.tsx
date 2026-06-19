@@ -55,7 +55,9 @@ export function HeroSection() {
           poster=""
           onError={() => setHasVideo(false)}
         >
+          {/* Bundled royalty-free clip first; CDN copy as a resilient fallback. */}
           <source src="/hero.mp4" type="video/mp4" />
+          <source src="https://assets.mixkit.co/videos/47051/47051-720.mp4" type="video/mp4" />
         </video>
       )}
 
