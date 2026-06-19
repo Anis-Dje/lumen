@@ -1,0 +1,52 @@
+# ===========================
+# Backend (Laravel / PHP)
+# ===========================
+backend/vendor/
+backend/.env
+backend/.env.backup
+backend/.env.production
+backend/storage/logs/*.log
+backend/storage/app/public/
+backend/storage/framework/cache/
+backend/storage/framework/sessions/
+backend/storage/framework/views/
+backend/bootstrap/cache/
+backend/public/hot
+backend/public/storage
+backend/.phpunit.result.cache
+backend/composer.lock
+
+# ===========================
+# Frontend (React / TypeScript / Node)
+# ===========================
+frontend/node_modules/
+frontend/.env
+frontend/.env.local
+frontend/.env.development.local
+frontend/.env.test.local
+frontend/.env.production.local
+frontend/dist/
+frontend/build/
+
+# ===========================
+# Database
+# ===========================
+database/*.sqlite
+database/*.db
+*.sql
+*.dump
+
+# ===========================
+# General
+# ===========================
+.DS_Store
+Thumbs.db
+*.log
+*.cache
+.idea/
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
