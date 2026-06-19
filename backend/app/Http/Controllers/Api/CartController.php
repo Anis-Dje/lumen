@@ -34,48 +34,65 @@ final class CartController extends Controller
     {
         $validated = $request->validated();
 
-        $cartItem = $this->cartService->addItem(
+        $this->cartService->addItem(
             $request->user(),
             $request->header('X-Session-Token'),
             $validated['product_variant_id'],
             (int) $validated['quantity'],
         );
 
-        return (new CartItemResource($cartItem))
+        // Return the full, refreshed cart so the SPA can hydrate its store directly.
+        $items = $this->cartService->getItems(
+            $request->user(),
+            $request->header('X-Session-Token'),
+        );
+
+        return CartItemResource::collection($items)
             ->response()
             ->setStatusCode(Response::HTTP_CREATED);
     }
 
-    public function update(UpdateCartRequest $request, string $cartItemId): CartItemResource
+    public function update(UpdateCartRequest $request, string $cartItem): AnonymousResourceCollection
     {
         $validated = $request->validated();
 
-        $cartItem = $this->cartService->updateQuantity(
-            $cartItemId,
+        $this->cartService->updateQuantity(
+            $cartItem,
             (int) $validated['quantity'],
         );
 
-        return new CartItemResource($cartItem);
+        $items = $this->cartService->getItems(
+            $request->user(),
+            $request->header('X-Session-Token'),
+        );
+
+        return CartItemResource::collection($items);
     }
 
-    public function destroy(string $cartItemId): JsonResponse
+    public function destroy(Request $request, string $cartItem): AnonymousResourceCollection
     {
-        $this->cartService->removeItem($cartItemId);
+        $this->cartService->removeItem($cartItem);
 
-        return new JsonResponse(null, Response::HTTP_NO_CONTENT);
+        $items = $this->cartService->getItems(
+            $request->user(),
+            $request->header('X-Session-Token'),
+        );
+
+        return CartItemResource::collection($items);
     }
 
     public function merge(Request $request): JsonResponse
     {
-        $sessionToken = $request->header('X-Session-Token');
+        // The SPA sends the guest token in the body; fall back to the header.
+        $sessionToken = $request->input('session_token') ?: $request->header('X-Session-Token');
 
         if (empty($sessionToken)) {
             return new JsonResponse([
-                'message' => 'X-Session-Token header is required.',
+                'message' => 'A guest session_token is required to merge the cart.',
             ], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
-        $this->cartService->mergeGuestCart($request->user(), $sessionToken);
+        $this->cartService->mergeGuestCart($request->user(), (string) $sessionToken);
 
         return new JsonResponse([
             'message' => 'Guest cart merged successfully.',

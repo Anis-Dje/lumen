@@ -8,17 +8,21 @@ return new class extends Migration
 {
     public function up(): void
     {
-        // ── Fidelity Tiers ────────────────────────────────────────────
+        // ── Fidelity Tiers ───────────────────────────────────────────────
         Schema::create('fidelity_tiers', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->string('name');
-            $table->decimal('min_spend', 10, 2)->default(0);
-            $table->decimal('multiplier', 5, 2)->default(1.00);
+            $table->string('slug')->nullable()->unique();
+            $table->decimal('min_lifetime_spend', 12, 2)->default(0);
+            $table->decimal('points_multiplier', 5, 2)->default(1.00);
+            $table->json('perks')->nullable();
             $table->integer('sort_order')->default(0);
             $table->timestamps();
+
+            $table->index('min_lifetime_spend');
         });
 
-        // ── Profiles ──────────────────────────────────────────────────
+        // ── Profiles ─────────────────────────────────────────────────────
         Schema::create('profiles', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->uuid('user_id')->unique();
@@ -35,7 +39,7 @@ return new class extends Migration
             $table->foreign('user_id')->references('id')->on('users')->cascadeOnDelete();
         });
 
-        // ── Categories ────────────────────────────────────────────────
+        // ── Categories ───────────────────────────────────────────────────
         Schema::create('categories', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->uuid('parent_id')->nullable();
@@ -46,9 +50,11 @@ return new class extends Migration
             $table->integer('sort_order')->default(0);
             $table->timestamps();
             $table->foreign('parent_id')->references('id')->on('categories')->nullOnDelete();
+
+            $table->index('is_active');
         });
 
-        // ── Products ──────────────────────────────────────────────────
+        // ── Products ─────────────────────────────────────────────────────
         Schema::create('products', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->uuid('category_id')->nullable();
@@ -61,9 +67,14 @@ return new class extends Migration
             $table->boolean('is_active')->default(true);
             $table->timestamps();
             $table->foreign('category_id')->references('id')->on('categories')->nullOnDelete();
+
+            // Indexes for searchable / filterable columns.
+            $table->index('name');
+            $table->index('is_active');
+            $table->index(['is_active', 'category_id']);
         });
 
-        // ── Product Variants ──────────────────────────────────────────
+        // ── Product Variants ─────────────────────────────────────────────
         Schema::create('product_variants', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->uuid('product_id');
@@ -77,21 +88,26 @@ return new class extends Migration
             $table->boolean('is_active')->default(true);
             $table->timestamps();
             $table->foreign('product_id')->references('id')->on('products')->cascadeOnDelete();
+
+            $table->index('product_id');
+            $table->index('stock');
         });
 
-        // ── Cart Items ────────────────────────────────────────────────
+        // ── Cart Items ───────────────────────────────────────────────────
         Schema::create('cart_items', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->uuid('user_id')->nullable();
             $table->string('session_token')->nullable()->index();
-            $table->uuid('variant_id');
+            $table->uuid('product_variant_id');
             $table->integer('quantity')->default(1);
             $table->timestamps();
             $table->foreign('user_id')->references('id')->on('users')->cascadeOnDelete();
-            $table->foreign('variant_id')->references('id')->on('product_variants')->cascadeOnDelete();
+            $table->foreign('product_variant_id')->references('id')->on('product_variants')->cascadeOnDelete();
+
+            $table->index('user_id');
         });
 
-        // ── Orders ────────────────────────────────────────────────────
+        // ── Orders ───────────────────────────────────────────────────────
         Schema::create('orders', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->uuid('user_id');
@@ -106,18 +122,22 @@ return new class extends Migration
             $table->string('shipping_name');
             $table->string('shipping_address');
             $table->string('shipping_city');
-            $table->string('shipping_state');
+            $table->string('shipping_state')->nullable();
             $table->string('shipping_postal_code');
             $table->string('shipping_country');
+            $table->text('notes')->nullable();
             $table->timestamps();
             $table->foreign('user_id')->references('id')->on('users')->cascadeOnDelete();
+
+            $table->index(['user_id', 'created_at']);
+            $table->index('status');
         });
 
-        // ── Order Items ───────────────────────────────────────────────
+        // ── Order Items ──────────────────────────────────────────────────
         Schema::create('order_items', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->uuid('order_id');
-            $table->uuid('variant_id')->nullable();
+            $table->uuid('product_variant_id')->nullable();
             $table->string('product_name');
             $table->string('variant_name');
             $table->string('sku');
@@ -126,19 +146,27 @@ return new class extends Migration
             $table->decimal('line_total', 10, 2);
             $table->timestamps();
             $table->foreign('order_id')->references('id')->on('orders')->cascadeOnDelete();
-            $table->foreign('variant_id')->references('id')->on('product_variants')->nullOnDelete();
+            $table->foreign('product_variant_id')->references('id')->on('product_variants')->nullOnDelete();
+
+            $table->index('order_id');
         });
 
-        // ── Fidelity Ledger ───────────────────────────────────────────
+        // ── Fidelity Ledger ──────────────────────────────────────────────
         Schema::create('fidelity_ledgers', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->uuid('user_id');
-            $table->string('entry_type'); // earn | redeem | adjust
+            $table->uuid('order_id')->nullable();
+            $table->string('entry_type'); // earned | redeemed | expired | adjustment
             $table->integer('points');
             $table->integer('balance_after');
             $table->string('description')->nullable();
+            $table->timestamp('expires_at')->nullable();
             $table->timestamps();
             $table->foreign('user_id')->references('id')->on('users')->cascadeOnDelete();
+            $table->foreign('order_id')->references('id')->on('orders')->nullOnDelete();
+
+            $table->index(['user_id', 'entry_type']);
+            $table->index('expires_at');
         });
     }
 

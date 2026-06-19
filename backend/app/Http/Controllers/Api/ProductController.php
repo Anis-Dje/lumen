@@ -25,9 +25,13 @@ final class ProductController extends Controller
             });
         }
 
-        if ($request->has('search')) {
+        if ($request->filled('search')) {
             $search = $request->string('search')->toString();
-            $query->where('name', 'ILIKE', "%{$search}%");
+            $query->where(function ($q) use ($search): void {
+                $q->where('name', 'LIKE', "%{$search}%")
+                    ->orWhere('short_description', 'LIKE', "%{$search}%")
+                    ->orWhere('description', 'LIKE', "%{$search}%");
+            });
         }
 
         $products = $query->paginate($request->integer('per_page', 15));

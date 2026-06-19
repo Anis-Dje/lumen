@@ -53,7 +53,7 @@ final class FidelityController extends Controller
             'balance' => $balance,
             'tier' => [
                 'name' => $currentTier?->name ?? 'None',
-                'multiplier' => $currentTier?->multiplier ?? 1.0,
+                'multiplier' => (float) ($currentTier?->points_multiplier ?? 1.0),
                 'next_tier_name' => $nextTier?->name,
                 'next_tier_spend_remaining' => $nextTier !== null
                     ? round($nextTier->min_lifetime_spend - $lifetimeSpend, 2)
@@ -92,7 +92,7 @@ final class FidelityController extends Controller
             'current_tier' => $currentTier !== null ? [
                 'id' => $currentTier->id,
                 'name' => $currentTier->name,
-                'multiplier' => (float) $currentTier->multiplier,
+                'multiplier' => (float) $currentTier->points_multiplier,
                 'min_lifetime_spend' => (float) $currentTier->min_lifetime_spend,
             ] : null,
             'lifetime_spend' => $lifetimeSpend,

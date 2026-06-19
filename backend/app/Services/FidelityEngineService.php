@@ -29,7 +29,7 @@ final class FidelityEngineService
     {
         $user->load('fidelityTier');
 
-        $multiplier = $user->fidelityTier?->multiplier ?? 1.0;
+        $multiplier = (float) ($user->fidelityTier?->points_multiplier ?? 1.0);
 
         return (int) floor((float) $order->total * $this->baseRate * $multiplier);
     }
