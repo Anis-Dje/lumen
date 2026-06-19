@@ -17,10 +17,10 @@ class ProductSeeder extends Seeder
     {
         // ── Fidelity Tiers ────────────────────────────────────────────
         $tiers = [
-            ['name' => 'Bronze', 'min_spend' => 0,       'multiplier' => 1.00, 'sort_order' => 1],
-            ['name' => 'Silver', 'min_spend' => 500,     'multiplier' => 1.50, 'sort_order' => 2],
-            ['name' => 'Gold',   'min_spend' => 2000,    'multiplier' => 2.00, 'sort_order' => 3],
-            ['name' => 'Platinum','min_spend'=> 5000,    'multiplier' => 3.00, 'sort_order' => 4],
+            ['name' => 'Bronze',   'slug' => 'bronze',   'min_lifetime_spend' => 0,    'points_multiplier' => 1.00, 'sort_order' => 1, 'perks' => ['Standard support']],
+            ['name' => 'Silver',   'slug' => 'silver',   'min_lifetime_spend' => 500,  'points_multiplier' => 1.50, 'sort_order' => 2, 'perks' => ['Priority support', 'Free shipping over $50']],
+            ['name' => 'Gold',     'slug' => 'gold',     'min_lifetime_spend' => 2000, 'points_multiplier' => 2.00, 'sort_order' => 3, 'perks' => ['Priority support', 'Free shipping', 'Early access']],
+            ['name' => 'Platinum', 'slug' => 'platinum', 'min_lifetime_spend' => 5000, 'points_multiplier' => 3.00, 'sort_order' => 4, 'perks' => ['Concierge support', 'Free shipping', 'Early access', 'Exclusive drops']],
         ];
 
         foreach ($tiers as $tierData) {
