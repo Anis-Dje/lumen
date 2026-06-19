@@ -4,6 +4,7 @@ export interface User {
   email: string;
   role: 'customer' | 'admin';
   fidelity_tier_id: string | null;
+  avatar_url?: string | null;
   profile?: Profile;
 }
 

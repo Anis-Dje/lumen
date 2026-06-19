@@ -31,6 +31,9 @@ class User extends Authenticatable
         'password',
         'role',
         'fidelity_tier_id',
+        'oauth_provider',
+        'oauth_id',
+        'avatar_url',
     ];
 
     protected $hidden = [

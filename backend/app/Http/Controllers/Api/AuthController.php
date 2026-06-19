@@ -97,6 +97,7 @@ final class AuthController extends Controller
                 'name' => $user->name,
                 'email' => $user->email,
                 'role' => $user->role->value,
+                'avatar_url' => $user->avatar_url,
                 'profile' => $user->profile,
                 'fidelity_tier' => $user->fidelityTier,
             ],

@@ -34,6 +34,17 @@ Authorization: Bearer <token>
 Demo credentials (from the seeder): `admin@crm.dev / password` (admin),
 `customer@crm.dev / password` (customer).
 
+### Social login (OAuth — Google / GitHub)
+
+| Method | Endpoint | Auth | Behaviour |
+|--------|----------|------|-----------|
+| GET | `/auth/{provider}/redirect` | – | 302 redirect to the provider (`provider` = `google` or `github`) |
+| GET | `/auth/{provider}/callback` | – | Provider returns here; backend finds/creates the user, mints a Sanctum token, then 302s to `{FRONTEND_URL}/auth/callback?token=…` (or `?error=…`) |
+
+These are full-page browser redirects, **not** XHR calls. Configure provider
+credentials in `.env` (`GOOGLE_CLIENT_ID/SECRET`, `GITHUB_CLIENT_ID/SECRET`)
+and run `composer require laravel/socialite` (already in `composer.json`).
+
 ---
 
 ## Catalog (Landing / Catalog page)
