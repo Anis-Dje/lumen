@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { UserPlus } from 'lucide-react';
 import { useAuthStore } from '../stores/authStore';
+import { OAuthButtons } from '../components/ui/OAuthButtons';
 
 export const RegisterPage: React.FC = () => {
   const [name, setName] = useState('');
@@ -91,6 +92,8 @@ export const RegisterPage: React.FC = () => {
             {isLoading ? 'Creating Account...' : 'Create Account'}
           </button>
         </form>
+
+        <OAuthButtons />
 
         <p className="text-center text-sm" style={{ color: 'var(--text-secondary)' }}>
           Already have an account?{' '}

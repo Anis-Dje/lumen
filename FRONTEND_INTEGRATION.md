@@ -60,6 +60,32 @@ SANCTUM_STATEFUL_DOMAINS=app.yourdomain.com
 `config/cors.php` allows `api/*` for the configured origin(s), all methods and
 headers (including `Authorization` and `X-Session-Token`).
 
+## 4b. Social login (OAuth)
+
+"Continue with Google / GitHub" buttons (`src/components/ui/OAuthButtons.tsx`)
+navigate the browser to `${API}/auth/{provider}/redirect`. The backend
+(Laravel Socialite, stateless) handles the provider handshake and redirects back
+to `/auth/callback?token=…`, which `OAuthCallbackPage` consumes — it stores the
+token, fetches the user, and routes home.
+
+Backend setup:
+1. `composer require laravel/socialite` (already declared in `composer.json`).
+2. Create OAuth apps (Google Cloud Console / GitHub Developer settings) and set
+   `GOOGLE_CLIENT_ID/SECRET` and `GITHUB_CLIENT_ID/SECRET` in `.env`. The
+   authorized redirect URIs must match `{APP_URL}/api/auth/{provider}/callback`.
+3. Ensure `FRONTEND_URL` in `.env` points at the SPA so the callback can return
+   the token to the right origin.
+
+For separate-origin deploys, set `VITE_API_URL` in the frontend `.env` to the
+full API origin so the OAuth buttons hit the right host.
+
+## 4c. Landing hero video (optional)
+
+The hero (`src/components/landing/HeroSection.tsx`) shows an always-on animated
+"tech constellation" canvas. To layer a looping video on top, drop an MP4 at
+`frontend/public/hero.mp4` — it auto-plays muted/looping and gracefully falls
+back to the canvas if the file is absent.
+
 ## 5. Response shapes the SPA expects
 
 - Single resources: `{ data: {...} }`

@@ -13,6 +13,7 @@ interface AuthState {
   register: (name: string, email: string, password: string, passwordConfirmation: string) => Promise<void>;
   logout: () => Promise<void>;
   fetchUser: () => Promise<void>;
+  loginWithToken: (token: string) => Promise<void>;
   clearError: () => void;
 }
 
@@ -90,6 +91,20 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       set({ user: response.data.user, isLoading: false });
     } catch {
       set({ isLoading: false });
+    }
+  },
+
+  loginWithToken: async (token: string): Promise<void> => {
+    // Used by the OAuth callback once the backend hands us a Sanctum token.
+    localStorage.setItem('auth_token', token);
+    set({ token, isLoading: true, error: null });
+    try {
+      const response = await api.auth.getUser();
+      set({ user: response.data.user, isLoading: false });
+    } catch (err: unknown) {
+      localStorage.removeItem('auth_token');
+      set({ user: null, token: null, isLoading: false, error: 'Sign-in failed' });
+      throw err;
     }
   },
 

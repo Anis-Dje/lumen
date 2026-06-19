@@ -157,12 +157,33 @@ export const fidelityApi = {
 // ─── ADMIN ──────────────────────────────────────────────────────────────────
 
 export const adminApi = {
-  getAnalytics: () => axiosInstance.get<{ data: Record<string, unknown> }>('/admin/analytics'),
+  getAnalytics: () =>
+    axiosInstance.get<{
+      data: {
+        total_revenue: number;
+        total_orders: number;
+        active_fidelity_users: number;
+        average_order_value: number;
+      };
+    }>('/admin/analytics'),
 
-  getRevenue: () => axiosInstance.get<{ data: Record<string, unknown> }>('/admin/analytics/revenue'),
+  getRevenue: () =>
+    axiosInstance.get<{ data: { date: string; revenue: number; orders: number }[] }>(
+      '/admin/analytics/revenue',
+    ),
 
   getLowStock: () =>
-    axiosInstance.get<{ data: ProductVariant[] }>('/admin/analytics/low-stock'),
+    axiosInstance.get<{
+      data: {
+        id: string;
+        sku: string;
+        name: string;
+        stock: number;
+        low_stock_threshold: number;
+        product_name: string;
+        product_slug: string;
+      }[];
+    }>('/admin/analytics/low-stock'),
 
   createProduct: (data: any) =>
     axiosInstance.post<{ data: Product }>('/admin/products', data),

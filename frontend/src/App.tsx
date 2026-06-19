@@ -8,6 +8,7 @@ import { CatalogPage } from './pages/CatalogPage';
 import { ProductDetailPage } from './pages/ProductDetailPage';
 import { LoginPage } from './pages/LoginPage';
 import { RegisterPage } from './pages/RegisterPage';
+import { OAuthCallbackPage } from './pages/OAuthCallbackPage';
 import { CheckoutPage } from './pages/CheckoutPage';
 import { OrdersPage } from './pages/OrdersPage';
 import { AdminDashboardPage } from './pages/admin/AdminDashboardPage';
@@ -97,6 +98,7 @@ const App: React.FC = () => {
           <Route path="/products/:slug" element={<ProductDetailPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
+          <Route path="/auth/callback" element={<OAuthCallbackPage />} />
         </Route>
 
         {/* Authenticated routes */}

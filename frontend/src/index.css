@@ -358,3 +358,46 @@ h1, h2, h3, h4, h5, h6 {
 .step-line-completed {
   background: var(--accent-success);
 }
+
+/* ============================================
+   Landing: scroll-reactive hero gradient
+   ============================================ */
+.hero-gradient {
+  background:
+    radial-gradient(55% 45% at 18% 22%, rgba(108, 92, 231, 0.28), transparent 60%),
+    radial-gradient(50% 45% at 82% 28%, rgba(0, 210, 255, 0.20), transparent 60%),
+    linear-gradient(180deg, transparent 55%, var(--bg-primary) 100%);
+  filter: hue-rotate(calc(var(--scroll-hue, 0) * 1deg));
+  transition: filter 200ms linear;
+}
+
+/* Hide scrollbar while keeping scroll (horizontal carousel) */
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* OAuth provider button */
+.btn-oauth {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.625rem;
+  width: 100%;
+  padding: 0.7rem 1rem;
+  background: var(--bg-elevated);
+  color: var(--text-primary);
+  font-weight: 600;
+  font-size: 0.875rem;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-button);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+.btn-oauth:hover {
+  border-color: var(--accent-primary);
+  background: rgba(108, 92, 231, 0.08);
+}

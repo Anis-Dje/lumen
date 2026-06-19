@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CartController;
 use App\Http\Controllers\Api\CheckoutController;
 use App\Http\Controllers\Api\FidelityController;
+use App\Http\Controllers\Api\OAuthController;
 use App\Http\Controllers\Api\OrderController;
 use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\Admin\AnalyticsController;
@@ -24,6 +25,12 @@ use Illuminate\Support\Facades\Route;
 Route::prefix('auth')->group(function (): void {
     Route::post('/register', [AuthController::class, 'register']);
     Route::post('/login', [AuthController::class, 'login']);
+
+    // Social login (Google / GitHub) via Socialite.
+    Route::get('/{provider}/redirect', [OAuthController::class, 'redirect'])
+        ->where('provider', 'google|github');
+    Route::get('/{provider}/callback', [OAuthController::class, 'callback'])
+        ->where('provider', 'google|github');
 });
 
 Route::get('/products', [ProductController::class, 'index']);
