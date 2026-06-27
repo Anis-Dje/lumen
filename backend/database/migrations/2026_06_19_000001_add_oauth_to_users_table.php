@@ -11,7 +11,7 @@ return new class extends Migration
         Schema::table('users', function (Blueprint $table) {
             $table->string('oauth_provider')->nullable()->after('role');
             $table->string('oauth_id')->nullable()->after('oauth_provider');
-            $table->string('avatar_url')->nullable()->after('oauth_id');
+            $table->text('avatar_url')->nullable()->after('oauth_id');
 
             $table->index(['oauth_provider', 'oauth_id']);
         });

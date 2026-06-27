@@ -49,9 +49,13 @@ return new class extends Migration
             $table->boolean('is_active')->default(true);
             $table->integer('sort_order')->default(0);
             $table->timestamps();
-            $table->foreign('parent_id')->references('id')->on('categories')->nullOnDelete();
 
             $table->index('is_active');
+        });
+
+        // Add self-referencing FK after the table exists (PostgreSQL requires this)
+        Schema::table('categories', function (Blueprint $table) {
+            $table->foreign('parent_id')->references('id')->on('categories')->nullOnDelete();
         });
 
         // ── Products ─────────────────────────────────────────────────────

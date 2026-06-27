@@ -17,8 +17,8 @@ use Laravel\Sanctum\HasApiTokens;
 class User extends Authenticatable
 {
     use HasApiTokens;
-    use HasUuids;
     use HasFactory;
+    use HasUuids;
     use Notifiable;
 
     public $incrementing = false;
@@ -30,10 +30,9 @@ class User extends Authenticatable
         'email',
         'password',
         'role',
-        'fidelity_tier_id',
+        'avatar_url',
         'oauth_provider',
         'oauth_id',
-        'avatar_url',
     ];
 
     protected $hidden = [
@@ -45,19 +44,19 @@ class User extends Authenticatable
     {
         return [
             'email_verified_at' => 'datetime',
-            'password' => 'hashed',
-            'role' => UserRole::class,
+            'password'          => 'hashed',
+            'role'              => UserRole::class,
         ];
-    }
-
-    public function isAdmin(): bool
-    {
-        return $this->role->isAdmin();
     }
 
     public function profile(): HasOne
     {
         return $this->hasOne(Profile::class);
+    }
+
+    public function fidelityTier(): BelongsTo
+    {
+        return $this->belongsTo(FidelityTier::class, 'fidelity_tier_id');
     }
 
     public function orders(): HasMany
@@ -68,15 +67,5 @@ class User extends Authenticatable
     public function cartItems(): HasMany
     {
         return $this->hasMany(CartItem::class);
-    }
-
-    public function fidelityLedger(): HasMany
-    {
-        return $this->hasMany(FidelityLedger::class);
-    }
-
-    public function fidelityTier(): BelongsTo
-    {
-        return $this->belongsTo(FidelityTier::class);
     }
 }
